@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read and write their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Allow service accounts (for webhooks) to write user data
+    match /users/{userId} {
+      allow write: if request.auth == null; // For webhook calls
+    }
+
+    // Allow users to manage their saved decks
+    match /users/{userId} {
+      allow update: if request.auth != null && request.auth.uid == userId
+        && request.resource.data.keys().hasAny(['savedDecks', 'updatedAt']);
+    }
+
+    // ========================================================================
+    // CHAT HISTORY SECURITY RULES
+    // ========================================================================
+
+    // Chat documents - users can only access their own chats
+    match /users/{userId}/chats/{chatId} {
+      // Basic CRUD operations
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Ensure userId field matches authenticated user on create/update
+      allow create, update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.userId == userId;
+
+      // Allow batch operations for chat management
+      allow delete: if request.auth != null && request.auth.uid == userId;
+
+      // Message subcollection - users can only access messages in their own chats
+      match /messages/{messageId} {
+        // Basic CRUD operations for messages
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+
+        // Allow batch operations for message management
+        allow create: if request.auth != null && request.auth.uid == userId;
+        allow update: if request.auth != null && request.auth.uid == userId;
+        allow delete: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // ========================================================================
+    // REAL-TIME LISTENER PERMISSIONS
+    // ========================================================================
+
+    // Allow real-time listeners for chat lists
+    match /users/{userId}/chats/{document=**} {
+      allow list: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ========================================================================
+    // MIGRATION AND BULK OPERATIONS
+    // ========================================================================
+
+    // Allow bulk operations for data migration
+    match /users/{userId}/chats/{chatId} {
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasAny([
+          'title', 'createdAt', 'updatedAt', 'lastMessageAt',
+          'messageCount', 'isArchived', 'syncStatus', 'deviceOrigin',
+          'lastMessage', 'metadata', 'userId'
+        ]);
+    }
+
+    // ========================================================================
+    // SYNC STATUS AND CONFLICT RESOLUTION
+    // ========================================================================
+
+    // Allow sync status updates
+    match /users/{userId}/chats/{chatId} {
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasAny(['syncStatus', 'updatedAt']);
+    }
+
+    match /users/{userId}/chats/{chatId}/messages/{messageId} {
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasAny(['syncStatus', 'updatedAt', 'isStreaming']);
+    }
+  }
+}

@@ -1,0 +1,330 @@
+/* Markdown content styling */
+.markdown-content {
+  line-height: 1.6; /* leading-relaxed equivalent */
+  color: #1a1a1a; /* Dark text for light mode - much more visible */
+}
+
+/* User message styling */
+.user-response-container {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  color: #1a1a1a !important; /* Dark text for light mode */
+}
+
+.dark .user-response-container {
+  color: #f1f5f9 !important; /* Softer white text for dark mode */
+}
+
+/* Headings */
+.markdown-content h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #eaecef;
+}
+
+.markdown-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #eaecef;
+}
+
+.markdown-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.markdown-content h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.markdown-content h5, .markdown-content h6 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Paragraphs and spacing */
+.markdown-content p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+/* Lists */
+.markdown-content ul, .markdown-content ol {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  padding-left: 2rem;
+}
+
+.markdown-content ul {
+  list-style-type: disc;
+}
+
+.markdown-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  list-style-position: outside;
+}
+
+.markdown-content ol li {
+  display: list-item;
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+  line-height: 1.6;
+}
+
+.markdown-content ol li::marker {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #374151;
+}
+
+.markdown-content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.markdown-content li > ul, .markdown-content li > ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+/* Blockquotes */
+.markdown-content blockquote {
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  border-left: 4px solid #dfe2e5;
+  color: #6a737d;
+}
+
+.markdown-content blockquote > :first-child {
+  margin-top: 0;
+}
+
+.markdown-content blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+/* Code */
+.markdown-content pre {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  overflow: auto;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 3px;
+}
+
+.markdown-content code {
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+  font-size: 0.85rem;
+  padding: 0.2em 0.4em;
+  margin: 0;
+  background-color: rgba(27, 31, 35, 0.05);
+  border-radius: 3px;
+}
+
+.markdown-content pre code {
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  border: 0;
+}
+
+/* Links */
+.markdown-content a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
+}
+
+/* Images */
+.markdown-content img {
+  max-width: 100%;
+  box-sizing: content-box;
+  background-color: #fff;
+}
+
+/* Tables */
+.markdown-content table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.markdown-content table th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+.markdown-content table td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+.markdown-content table tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+.markdown-content table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/* Horizontal Rule */
+.markdown-content hr {
+  height: 0.25em;
+  padding: 0;
+  margin: 24px 0;
+  background-color: #e1e4e8;
+  border: 0;
+}
+
+/* Dark mode adjustments - Modern theme */
+@media (prefers-color-scheme: dark) {
+  .markdown-content {
+    color: #f1f5f9;
+  }
+
+  .markdown-content h1, .markdown-content h2 {
+    border-bottom-color: #475569;
+  }
+
+  .markdown-content blockquote {
+    border-left-color: #6366f1;
+    color: #cbd5e1;
+  }
+
+  .markdown-content pre {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+  }
+
+  .markdown-content code {
+    background-color: rgba(99, 102, 241, 0.1);
+  }
+
+  .markdown-content a {
+    color: #6366f1;
+  }
+
+  .markdown-content table th, .markdown-content table td {
+    border-color: #475569;
+  }
+
+  .markdown-content table tr {
+    background-color: #1e293b;
+    border-top-color: #475569;
+  }
+
+  .markdown-content table tr:nth-child(2n) {
+    background-color: #334155;
+  }
+
+  .markdown-content hr {
+    background-color: #475569;
+  }
+}
+
+/* Force dark text in light mode for AI responses */
+.markdown-content {
+  color: #1a1a1a !important;
+}
+
+.markdown-content * {
+  color: #1a1a1a !important;
+}
+
+/* Override for dark mode specifically */
+.dark .markdown-content {
+  color: #f1f5f9 !important;
+}
+
+.dark .markdown-content * {
+  color: #f1f5f9 !important;
+}
+
+/* Additional targeting for ReactMarkdown components */
+.markdown-content p,
+.markdown-content div,
+.markdown-content span,
+.markdown-content li,
+.markdown-content td,
+.markdown-content th {
+  color: #1a1a1a !important;
+}
+
+.dark .markdown-content p,
+.dark .markdown-content div,
+.dark .markdown-content span,
+.dark .markdown-content li,
+.dark .markdown-content td,
+.dark .markdown-content th {
+  color: #f1f5f9 !important;
+}
+
+/* Additional styles for proper text wrapping */
+.markdown-content {
+  white-space: normal; /* Use normal to let our JS preprocessing handle whitespace */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.markdown-content pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.markdown-content code {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.markdown-content p,
+.markdown-content li,
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  max-width: 100%;
+}

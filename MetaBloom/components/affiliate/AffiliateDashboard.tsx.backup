@@ -1,0 +1,208 @@
+"use client";
+
+import React, { useState } from 'react';
+import { PiCopy, PiCheck, PiUsers, PiCurrencyDollar, PiLink, PiShare } from 'react-icons/pi';
+import { useAuth } from '@/stores/auth';
+import { AffiliateData } from '@/lib/subscription';
+
+interface AffiliateDashboardProps {
+  affiliateData: AffiliateData;
+}
+
+export default function AffiliateDashboard({ affiliateData }: AffiliateDashboardProps) {
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const shareLink = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Join MetaBloom with my referral link',
+          text: 'Get started with MetaBloom AI for Hearthstone deck building!',
+          url: affiliateData.affiliateLink,
+        });
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      // Fallback to copying
+      copyToClipboard(affiliateData.affiliateLink);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-n700 dark:text-n30 mb-2">
+          Affiliate Dashboard
+        </h1>
+        <p className="text-n600 dark:text-n200">
+          Earn 20% commission on every referral that subscribes to a paid plan
+        </p>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Total Earnings */}
+        <div className="bg-white dark:bg-n0 border border-primaryColor/20 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-n600 dark:text-n200 mb-1">Total Earnings</p>
+              <p className="text-2xl font-bold text-green-600">
+                ${affiliateData.totalEarnings.toFixed(2)}
+              </p>
+            </div>
+            <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
+              <PiCurrencyDollar className="text-2xl text-green-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* Total Referrals */}
+        <div className="bg-white dark:bg-n0 border border-primaryColor/20 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-n600 dark:text-n200 mb-1">Total Referrals</p>
+              <p className="text-2xl font-bold text-primaryColor">
+                {affiliateData.totalReferrals}
+              </p>
+            </div>
+            <div className="bg-primaryColor/10 p-3 rounded-full">
+              <PiUsers className="text-2xl text-primaryColor" />
+            </div>
+          </div>
+        </div>
+
+        {/* Commission Rate */}
+        <div className="bg-white dark:bg-n0 border border-primaryColor/20 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-n600 dark:text-n200 mb-1">Commission Rate</p>
+              <p className="text-2xl font-bold text-n700 dark:text-n30">20%</p>
+            </div>
+            <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
+              <PiLink className="text-2xl text-blue-600" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Affiliate Link Section */}
+      <div className="bg-white dark:bg-n0 border border-primaryColor/20 rounded-lg p-6">
+        <h2 className="text-xl font-semibold text-n700 dark:text-n30 mb-4">
+          Your Affiliate Link
+        </h2>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1">
+            <input
+              type="text"
+              value={affiliateData.affiliateLink}
+              readOnly
+              className="w-full px-4 py-3 border border-primaryColor/20 rounded-lg bg-n50 dark:bg-n100 text-n700 dark:text-n30 font-mono text-sm"
+            />
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => copyToClipboard(affiliateData.affiliateLink)}
+              className="px-4 py-3 bg-primaryColor text-white rounded-lg hover:bg-primaryColor/90 transition-colors flex items-center gap-2"
+            >
+              {copied ? <PiCheck /> : <PiCopy />}
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+            <button
+              onClick={shareLink}
+              className="px-4 py-3 bg-n200 dark:bg-n600 text-n700 dark:text-n30 rounded-lg hover:bg-n300 dark:hover:bg-n500 transition-colors flex items-center gap-2"
+            >
+              <PiShare />
+              Share
+            </button>
+          </div>
+        </div>
+        <p className="text-sm text-n600 dark:text-n200 mt-3">
+          Share this link with friends and earn $2 for Standard subscriptions and $4 for Premium subscriptions.
+        </p>
+      </div>
+
+      {/* Commission Breakdown */}
+      <div className="bg-white dark:bg-n0 border border-primaryColor/20 rounded-lg p-6">
+        <h2 className="text-xl font-semibold text-n700 dark:text-n30 mb-4">
+          Commission Breakdown
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-n50 dark:bg-n100 p-4 rounded-lg">
+            <h3 className="font-semibold text-n700 dark:text-n30 mb-2">Standard Plan</h3>
+            <p className="text-2xl font-bold text-green-600">$2.00</p>
+            <p className="text-sm text-n600 dark:text-n200">per $10/month subscription</p>
+          </div>
+          <div className="bg-n50 dark:bg-n100 p-4 rounded-lg">
+            <h3 className="font-semibold text-n700 dark:text-n30 mb-2">Premium Plan</h3>
+            <p className="text-2xl font-bold text-green-600">$4.00</p>
+            <p className="text-sm text-n600 dark:text-n200">per $20/month subscription</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Referrals */}
+      {affiliateData.referralHistory.length > 0 && (
+        <div className="bg-white dark:bg-n0 border border-primaryColor/20 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-n700 dark:text-n30 mb-4">
+            Recent Referrals
+          </h2>
+          <div className="space-y-3">
+            {affiliateData.referralHistory
+              .sort((a, b) => b.referralDate - a.referralDate)
+              .slice(0, 5)
+              .map((referral, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-n50 dark:bg-n100 rounded-lg"
+                >
+                  <div>
+                    <p className="font-medium text-n700 dark:text-n30">
+                      {referral.referredUserEmail}
+                    </p>
+                    <p className="text-sm text-n600 dark:text-n200">
+                      {new Date(referral.referralDate).toLocaleDateString()} • {referral.subscriptionType} plan
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-green-600">
+                      +${referral.commissionAmount.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+          </div>
+          {affiliateData.referralHistory.length > 5 && (
+            <p className="text-sm text-n600 dark:text-n200 mt-3 text-center">
+              Showing 5 most recent referrals of {affiliateData.referralHistory.length} total
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* No Referrals Yet */}
+      {affiliateData.referralHistory.length === 0 && (
+        <div className="bg-white dark:bg-n0 border border-primaryColor/20 rounded-lg p-8 text-center">
+          <PiUsers className="text-4xl text-n400 dark:text-n500 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-n700 dark:text-n30 mb-2">
+            No referrals yet
+          </h3>
+          <p className="text-n600 dark:text-n200 mb-4">
+            Start sharing your affiliate link to earn commissions!
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}

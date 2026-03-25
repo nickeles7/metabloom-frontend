@@ -1,0 +1,194 @@
+import React, { useState } from "react";
+import Image from "next/image";
+import logo from "@/public/images/MetaBloom logo.png"; // Using the MetaBloom logo for MetaForge
+import {
+  PiArrowsCounterClockwise,
+  PiCopy,
+  PiShareFat,
+  PiThumbsDown,
+  PiThumbsUp,
+  PiCheck,
+} from "react-icons/pi";
+import "@/styles/typing-indicator.css";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeHighlight from "rehype-highlight";
+import remarkGfm from "remark-gfm";
+import DeckCode from "./DeckCode";
+import { useStreaming } from "@/contexts/StreamingContext";
+
+type AiReplyProps = {
+  replyText: string;
+  replyTime?: string;
+  isStreaming?: boolean;
+  messageId?: string;
+};
+
+function AiReply({ replyText, replyTime = "just now", isStreaming = false, messageId }: AiReplyProps) {
+  const [copied, setCopied] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
+  const { streamingContent, isMessageStreaming } = useStreaming();
+
+  // Get the real-time streaming content if available
+  const rawText = messageId && isMessageStreaming(messageId)
+    ? streamingContent[messageId]
+    : replyText;
+
+  // Clean up excessive whitespace while preserving intentional formatting
+  const displayText = rawText
+    ? rawText
+        // Replace 3+ consecutive newlines with just 2 newlines (one blank line)
+        .replace(/\n{3,}/g, '\n\n')
+        // Replace excessive spaces (4+ spaces) with single space
+        .replace(/ {4,}/g, ' ')
+        // Trim excessive whitespace at start and end
+        .trim()
+    : rawText;
+
+  // Don't render anything if there's no text and we're not streaming
+  if (!displayText && !isStreaming) {
+    return null;
+  }
+
+  // Function to copy text to clipboard
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(displayText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Function to copy code to clipboard
+  const copyCodeToClipboard = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCodeCopied(true);
+    setTimeout(() => setCodeCopied(false), 2000);
+  };
+
+  return (
+    <div className="ai-message-wrapper">
+      <div className="flex justify-start items-start gap-3 sm:gap-4 w-full">
+        <Image src={logo} alt="HearthForge Logo" width={32} height={32} className="max-sm:size-5 object-cover flex-shrink-0" />
+        <div className="ai-message-content">
+          <p className="text-xs text-n100 mb-3">HearthForge, {replyTime}</p>
+          <div className="text-sm w-full markdown-content overflow-hidden text-n700 dark:text-n30 leading-relaxed">
+          {isStreaming && !displayText ? (
+            // Only show typing indicator when streaming starts and no text yet
+            <div className="flex items-center">
+              <span className="typing-dot"></span>
+              <span className="typing-dot"></span>
+              <span className="typing-dot"></span>
+            </div>
+          ) : (
+            // Display the actual AI response with markdown formatting
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeRaw, rehypeHighlight]}
+              components={{
+                // Custom rendering for code blocks
+                code({ className, children, ...props }: any) {
+                  const inline = !className?.includes('language-');
+                  const match = /language-(\w+)/.exec(className || '');
+                  const codeContent = String(children).replace(/\n$/, '');
+
+                  // Check if this is a Hearthstone deck code (typically no language specified and in a specific format)
+                  const isDeckCode = !match &&
+                    codeContent.trim().length > 20 &&
+                    codeContent.trim().length < 150 &&
+                    /^[A-Za-z0-9+/=]+$/.test(codeContent.trim());
+
+                  if (isDeckCode) {
+                    return <DeckCode code={codeContent.trim()} />;
+                  }
+
+                  return !inline ? (
+                    <div className="relative w-full">
+                      <pre className={`${match ? `language-${match[1]}` : ''} rounded-md p-4 bg-gray-800 text-white overflow-hidden`}>
+                        <code className={`${className} whitespace-pre-wrap break-all`} {...props}>
+                          {children}
+                        </code>
+                      </pre>
+                      <button
+                        onClick={() => copyCodeToClipboard(codeContent)}
+                        className="absolute top-2 right-2 p-1 rounded-md bg-gray-700 text-white hover:bg-gray-600"
+                        title="Copy code"
+                      >
+                        {codeCopied ? <PiCheck /> : <PiCopy />}
+                      </button>
+                    </div>
+                  ) : (
+                    <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded-md" {...props}>
+                      {children}
+                    </code>
+                  );
+                },
+                // Custom rendering for tables
+                table({ ...props }) {
+                  return (
+                    <div className="overflow-x-auto w-full">
+                      <table className="border-collapse border border-gray-300 w-full" {...props} />
+                    </div>
+                  );
+                },
+                th({ ...props }) {
+                  return <th className="border border-gray-300 px-4 py-2 bg-gray-100 dark:bg-gray-700" {...props} />;
+                },
+                td({ ...props }) {
+                  return <td className="border border-gray-300 px-4 py-2" {...props} />;
+                },
+                // Smart paragraph component that prevents invalid nesting with DeckCode
+                p({ children, ...props }: any) {
+                  // Force proper evaluation of children (fixes React timing issue)
+                  const childrenArray = React.Children.toArray(children);
+
+                  // Check if any child is a DeckCode component
+                  const hasDeckCode = childrenArray.some((child: React.ReactNode) => {
+                    if (React.isValidElement(child)) {
+                      return child.type === DeckCode ||
+                             (child.type as { displayName?: string; name?: string })?.displayName === 'DeckCode' ||
+                             (child.type as { displayName?: string; name?: string })?.name === 'DeckCode';
+                    }
+                    return false;
+                  });
+
+                  // If contains deck code, render as div to avoid invalid HTML nesting
+                  if (hasDeckCode) {
+                    return <div className="my-2" {...props}>{childrenArray}</div>;
+                  }
+
+                  // Normal paragraph rendering - use normal whitespace since we preprocess
+                  return <p className="whitespace-normal break-words" {...props}>{childrenArray}</p>;
+                }
+              }}
+            >
+              {displayText}
+            </ReactMarkdown>
+          )}
+          </div>
+          <div className="flex justify-start items-center gap-2 mt-2">
+            <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full" title="Like">
+              <PiThumbsUp />
+            </button>
+            <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full" title="Dislike">
+              <PiThumbsDown />
+            </button>
+            <button
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+              title="Copy response"
+              onClick={copyToClipboard}
+            >
+              {copied ? <PiCheck /> : <PiCopy />}
+            </button>
+            <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full" title="Regenerate">
+              <PiArrowsCounterClockwise />
+            </button>
+            <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full" title="Share">
+              <PiShareFat />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default AiReply;

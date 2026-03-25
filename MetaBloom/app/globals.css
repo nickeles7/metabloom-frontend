@@ -1,0 +1,620 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-inter);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Scroll bar - Modern styling */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+  background-color: rgba(15, 20, 25, 0.3);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  background-color: rgba(15, 20, 25, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #6366F1;
+  border-radius: 3px;
+}
+/* For Chrome, Safari, Edge, and Opera */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@layer components {
+  /* Typography */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply m-0 p-0 !leading-[120%];
+  }
+  p {
+    @apply !leading-[150%];
+  }
+
+  /* Modern utility classes */
+  .sidebar-transition {
+    @apply transition-transform duration-300 ease-in-out;
+  }
+
+  .chat-item-hover {
+    @apply hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors;
+  }
+
+  /* Proportional Layout System - Based on 1669×904 viewport target */
+  /* Viewport Container - Full width with max constraints */
+  .viewport-container {
+    @apply w-full mx-auto;
+    max-width: 100vw;
+    min-height: 100vh;
+  }
+
+  /* Chat System - Modern CSS Grid Implementation */
+
+  /* Main Chat Container - CSS Grid Layout */
+  .chat-container {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    grid-template-columns: 1fr;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Chat Messages Area - Grid Item 1 */
+  .chat-messages-area {
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Full-width scroll wrapper for viewport-edge scrollbar */
+  .chat-scroll-wrapper {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    position: relative;
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none;
+    /* Hide scrollbar for IE and Edge */
+    -ms-overflow-style: none;
+  }
+
+  /* Centered content container within scroll wrapper */
+  .chat-scroll-content {
+    display: grid;
+    grid-template-columns: 1fr min(46vw, 768px) 1fr;
+    grid-template-rows: 1fr;
+    min-height: 100%;
+    position: relative;
+  }
+
+  /* Sidebar-aware centering - ONLY when sidebar is open, shift content left */
+  .sidebar-open .chat-scroll-content {
+    transform: translateX(-145px);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar-open .chat-input-content {
+    transform: translateX(-145px);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar-open footer .container {
+    transform: translateX(-145px);
+    transition: transform 0.3s ease;
+  }
+
+  /* Left spacer for centering */
+  .chat-left-spacer {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* Center content area */
+  .chat-content-wrapper {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 320px;
+    max-width: 768px;
+    position: relative;
+  }
+
+  /* Right spacer */
+  .chat-right-spacer {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  /* Messages container - content only (scrolling handled by wrapper) */
+  .chat-messages-container {
+    flex: 1;
+    padding: 12px 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 100%;
+  }
+
+  /* Messages list */
+  .chat-messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 24px;
+    min-height: min-content;
+    margin-top: auto;
+  }
+
+  /* Input Area - Grid Item 2 */
+  .chat-input-area {
+    grid-row: 2;
+    grid-column: 1;
+    padding: 12px 0;
+    background: inherit;
+    position: relative;
+  }
+
+  /* Input content container - matches scroll content centering */
+  .chat-input-content {
+    display: grid;
+    grid-template-columns: 1fr min(46vw, 768px) 1fr;
+    width: 100%;
+  }
+
+  .chat-input-wrapper {
+    grid-column: 2;
+    padding: 12px 24px 0 24px;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .chat-scroll-content,
+    .chat-input-content {
+      grid-template-columns: 1fr 95vw 1fr;
+    }
+
+    /* On mobile, sidebar is overlay so no need for sidebar-aware centering */
+    .sidebar-open .chat-scroll-content,
+    .sidebar-open .chat-input-content {
+      grid-template-columns: 1fr 95vw 1fr;
+    }
+
+    .chat-content-wrapper {
+      min-width: 300px;
+    }
+
+    .chat-messages-list,
+    .chat-input-wrapper {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .chat-scroll-content,
+    .chat-input-content {
+      grid-template-columns: 8px 1fr 8px;
+    }
+
+    /* On mobile, sidebar is overlay so no need for sidebar-aware centering */
+    .sidebar-open .chat-scroll-content,
+    .sidebar-open .chat-input-content {
+      grid-template-columns: 8px 1fr 8px;
+    }
+
+    .chat-messages-list,
+    .chat-input-wrapper {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+  }
+
+  /* Dark mode support */
+
+  /* Scrollbar styling for webkit browsers - HIDDEN */
+  .chat-scroll-wrapper::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+
+  .chat-scroll-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .chat-scroll-wrapper::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+
+  .chat-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: transparent;
+  }
+
+  .chat-scroll-wrapper::-webkit-scrollbar-thumb:active {
+    background-color: transparent;
+  }
+
+  .dark .chat-scroll-wrapper::-webkit-scrollbar {
+    background: transparent;
+  }
+
+  .dark .chat-scroll-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .dark .chat-scroll-wrapper::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+
+  .dark .chat-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: transparent;
+  }
+
+  .dark .chat-scroll-wrapper::-webkit-scrollbar-thumb:active {
+    background-color: transparent;
+  }
+
+  /* Message components styling */
+  .chat-message {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Ensure proper text wrapping */
+  .chat-message * {
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Loading state */
+  .chat-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #666;
+  }
+
+  /* Error state */
+  .chat-error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 8px;
+    margin: 0 24px;
+  }
+
+  /* Animation for new messages */
+  @keyframes chat-message-appear {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .chat-message-new {
+    animation: chat-message-appear 0.3s ease-out;
+  }
+
+  /* Smooth scrolling */
+  .chat-scroll-wrapper {
+    scroll-behavior: smooth;
+  }
+
+  /* Focus management */
+  .chat-container:focus-within .chat-scroll-wrapper {
+    scroll-behavior: auto;
+  }
+
+  /* Message Container - 85% of chat window width for proper spacing */
+  .message-container {
+    @apply w-full max-w-[85%] mx-auto;
+  }
+
+  /* Legacy container classes - Updated for consistency */
+  .container {
+    @apply mx-auto w-full;
+    max-width: min(46vw, 768px);
+    min-width: 320px;
+  }
+  .large-container {
+    @apply mx-auto w-full;
+    max-width: min(60vw, 1000px);
+  }
+
+  /* stp = section top padding, sbp= section bottom padding */
+  .stp-30 {
+    @apply pt-16 md:pt-24 xl:pt-30;
+  }
+  .sbp-30 {
+    @apply pb-16 md:pb-24 xl:pb-30;
+  }
+  .stp-15 {
+    @apply pt-8 md:pt-12 xl:pt-15;
+  }
+  .sbp-15 {
+    @apply pb-8 md:pb-12 xl:pb-15;
+  }
+}
+
+/* Keyframe animation */
+.circle {
+  animation: circleAnimation 5s linear;
+}
+@keyframes circleAnimation {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(0.9);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+pre {
+  white-space: pre-line;
+  word-wrap: break-word;
+  text-align: justify;
+}
+
+
+
+/* Chat text styles */
+.dark .text-white {
+  color: white !important;
+}
+
+.text-white {
+  color: white !important;
+}
+
+/* Fix for dark mode text */
+.dark-text {
+  color: #1a1a1a !important; /* Dark text for light mode */
+}
+
+.dark .dark-text {
+  color: #FFFFFF !important; /* White text for dark mode */
+}
+
+/* AI response container - modern styling */
+.ai-response-container {
+  background-color: #f8fafc; /* Clean light background */
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  color: #1a1a1a !important; /* Dark text for light mode */
+  line-height: 1.6;
+  border: 1px solid #e2e8f0;
+}
+
+.dark .ai-response-container {
+  background-color: #1e293b; /* Warmer dark surface */
+  color: #f1f5f9 !important; /* Softer white text */
+  border: 1px solid #334155;
+}
+
+/* Force AI response text to be visible in light mode */
+.markdown-content,
+.ai-response-container,
+[class*="markdown"] {
+  color: #1a1a1a !important;
+  line-height: 1.6;
+}
+
+/* Hearthstone Card Hover Styles */
+.card-hover-trigger {
+  position: relative;
+  display: inline;
+  transition: all 0.2s ease-in-out;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.card-hover-trigger:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.dark .card-hover-trigger:hover {
+  background-color: rgba(96, 165, 250, 0.15);
+}
+
+/* Card tooltip container */
+.card-tooltip {
+  animation: fadeInTooltip 0.2s ease-out;
+  /* Removed backdrop-filter to prevent transparency issues */
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.3),
+    0 10px 10px -5px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.dark .card-tooltip {
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.5),
+    0 10px 10px -5px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Card tooltip animations */
+@keyframes fadeInTooltip {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Card image loading states */
+.card-tooltip img {
+  max-width: 256px;
+  height: auto;
+  border-radius: 6px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Card info text styling */
+.card-tooltip .card-info {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Responsive card tooltip sizing */
+@media (max-width: 640px) {
+  .card-tooltip {
+    max-width: calc(100vw - 20px);
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+
+  .card-tooltip img {
+    max-width: 200px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card-hover-trigger {
+    border: 1px solid currentColor;
+  }
+
+  .card-tooltip {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .card-hover-trigger {
+    transition: none;
+  }
+
+
+
+  .card-tooltip {
+    animation: none;
+  }
+
+  @keyframes fadeInTooltip {
+    from, to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+.dark .markdown-content,
+.dark .ai-response-container,
+.dark [class*="markdown"] {
+  color: #f1f5f9 !important; /* Softer white for better readability */
+}
+
+/* User response container - modern styling */
+.user-response-container {
+  background-color: #ede9fe; /* Soft purple tint */
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  color: #1a1a1a !important; /* Dark text for light mode */
+  line-height: 1.6;
+  border: 1px solid #c4b5fd;
+}
+
+.dark .user-response-container {
+  background-color: rgba(99, 102, 241, 0.15); /* Softer primary color background */
+  color: #f1f5f9 !important; /* Softer white text */
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+/* Message Content Styling - Proportional and Consistent */
+.ai-response-container,
+.user-response-container,
+.markdown-content {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* User message styling - Right aligned, max 85% width */
+.user-message-wrapper {
+  @apply flex flex-col items-end gap-2 w-full;
+}
+
+.user-message-content {
+  @apply max-w-[85%] w-fit;
+}
+
+/* AI message styling - Left aligned, max 85% width */
+.ai-message-wrapper {
+  @apply flex flex-col items-start gap-2 w-full;
+}
+
+.ai-message-content {
+  @apply max-w-[85%] w-full;
+}
+
+/* Ensure all pre and code elements wrap properly */
+pre, code {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+
+
+.chat-messages-scroll {
+  @apply overflow-y-auto;
+  flex: 1 1 auto;
+  min-height: 200px;
+}
+
+
+
+
+
+
+
+/* Custom Google Button Styles - Now handled by the GoogleSignInButton component */

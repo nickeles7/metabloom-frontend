@@ -1,0 +1,77 @@
+{
+  "name": "metabloom",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "^20.10.0 || ^22.12.0",
+    "npm": "^8.0.0 || ^10.9.0"
+  },
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "logs:clean": "rm -rf logs/",
+    "logs:view": "tail -f logs/**/*.log",
+    "logs:errors": "tail -f logs/errors/**/*.log",
+    "logs:queries": "tail -f logs/queries/**/*.log",
+    "logs:sessions": "tail -f logs/sessions/**/*.log",
+    "logs:performance": "tail -f logs/performance/**/*.log",
+    "dev:capture": "scripts/capture-dev-logs.sh",
+    "dev:analyze": "scripts/analyze-dev-logs.sh"
+  },
+  "dependencies": {
+    "@stripe/react-stripe-js": "^3.7.0",
+    "@stripe/stripe-js": "^7.3.0",
+    "@wavesurfer/react": "^1.0.9",
+    "deckstrings": "^3.1.2",
+    "dotenv": "^16.5.0",
+    "firebase": "^11.7.3",
+    "highlight.js": "^11.11.1",
+    "next": "15.1.7",
+    "next-themes": "^0.4.4",
+    "node-fetch": "^3.3.2",
+    "openai": "^5.0.3",
+    "react": "^19.0.0",
+    "react-animate-height": "^3.2.3",
+    "react-custom-roulette": "^1.4.1",
+    "react-dom": "^19.0.0",
+    "react-google-button": "^0.8.0",
+    "react-icons": "^5.4.0",
+    "react-markdown": "^10.1.0",
+    "react-range": "^1.10.0",
+    "react-select": "^5.10.1",
+    "react-shiki": "^0.4.0",
+    "react-syntax-highlighter": "^15.6.1",
+    "react-type-animation": "^3.2.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
+    "sharp": "^0.34.2",
+    "stripe": "^18.1.1",
+    "toolcool-range-slider": "^4.0.8",
+    "uuid": "^11.0.5",
+    "wavesurfer.js": "^7.9.1",
+    "zustand": "^5.0.3"
+  },
+  "overrides": {
+    "sharp": "^0.34.2",
+    "react-custom-roulette": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.7",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
