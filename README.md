@@ -20,7 +20,7 @@ LLM for interpretation. Deterministic systems for execution. All requests route 
 
 **Resilience.** The Lambda client has a circuit breaker (5 failure threshold, 30s timeout), exponential backoff with jitter, and configurable retries. Card database goes down, it fails gracefully.
 
-## What Was Hard
+## Challenges
 
 **Making AST to SQL reliable.** Building the node types, operators, compiler, transformer, and validator. Getting it to the point where card searches actually return what the user meant, not what the LLM guessed.
 
